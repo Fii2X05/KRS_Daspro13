@@ -78,9 +78,21 @@ class SistemPemantauanKRS {
         String kode = sc.nextLine();
         System.out.print("Nama Mata Kuliah: ");
         String nama = sc.nextLine();
-        System.out.print("Jumlah SKS (1-3): ");
-        int sks = sc.nextInt();
-        sc.nextLine();
+
+        int sks;
+
+        while (true) {
+            System.out.print("Jumlah sks (1-3): ");
+            sks = sc.nextInt();
+            sc.nextLine();
+            if (sks >= 1 && sks <= 3){
+                break;
+            }else{
+                System.out.println("Jumlah sks yang anda masukkan tidak valid. Masukkan angka antara 1-3!");
+            }
+
+        }
+
 
         mataKuliah mataKuliah = new mataKuliah(kode, nama, sks);
         mahasiswa.daftarMataKuliah.add(mataKuliah);
