@@ -57,6 +57,7 @@ class SistemPemantauanKRS {
                     break;
                 case 4:
                     System.out.println("Program selesai");
+                    System.out.println("Terima Kasih!");
                     return;
                 default:
                     System.out.println("Pilihan tidak valid");
