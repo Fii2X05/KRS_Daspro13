@@ -1,11 +1,10 @@
 import java.util.Scanner;
-import java.util.ArrayList;
 
-class mataKuliah {
+class MataKuliah {
     String Kode, Nama;
     int sks;
 
-    public mataKuliah(String Kode, String Nama, int sks) {
+    public MataKuliah(String Kode, String Nama, int sks) {
         this.Kode = Kode;
         this.Nama = Nama;
         this.sks = sks;
@@ -14,7 +13,8 @@ class mataKuliah {
 
 class Mahasiswa {
     String Nama, Nim;
-    ArrayList<mataKuliah> daftarMataKuliah = new ArrayList<>();
+    MataKuliah[] daftarMataKuliah = new MataKuliah[10]; // Maksimal 10 mata kuliah
+    int jumlahMataKuliah = 0;
 
     public Mahasiswa(String Nama, String Nim) {
         this.Nama = Nama;
@@ -23,15 +23,16 @@ class Mahasiswa {
 
     public int hitungTotalSKS() {
         int total = 0;
-        for (mataKuliah mk : daftarMataKuliah) {
-            total += mk.sks;
+        for (int i = 0; i < jumlahMataKuliah; i++) {
+            total += daftarMataKuliah[i].sks;
         }
         return total;
     }
 }
 
 class SistemPemantauanKRS {
-    static ArrayList<Mahasiswa> daftarMahasiswa = new ArrayList<>();
+    static Mahasiswa[] daftarMahasiswa = new Mahasiswa[100]; // Maksimal 100 mahasiswa
+    static int jumlahMahasiswa = 0;
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -66,6 +67,11 @@ class SistemPemantauanKRS {
     }
 
     public static void tambahDataKRS() {
+        if (jumlahMahasiswa >= 100) {
+            System.out.println("Kapasitas maksimum mahasiswa tercapai!");
+            return;
+        }
+
         System.out.println("\n--- Tambah data KRS ---");
         System.out.print("Nama Mahasiswa: ");
         String Nama = sc.nextLine();
@@ -75,18 +81,22 @@ class SistemPemantauanKRS {
         Mahasiswa mahasiswa = new Mahasiswa(Nama, Nim);
         tambahMataKuliah(mahasiswa);
 
-        daftarMahasiswa.add(mahasiswa);
+        daftarMahasiswa[jumlahMahasiswa++] = mahasiswa;
         System.out.println("Total SKS yang diambil: " + mahasiswa.hitungTotalSKS());
     }
 
     public static void tambahMataKuliah(Mahasiswa mahasiswa) {
+        if (mahasiswa.jumlahMataKuliah >= 10) {
+            System.out.println("Kapasitas maksimum mata kuliah tercapai!");
+            return;
+        }
+
         System.out.print("Kode Mata Kuliah: ");
         String kode = sc.nextLine();
         System.out.print("Nama Mata Kuliah: ");
         String nama = sc.nextLine();
 
         int sks;
-
         while (true) {
             System.out.print("Jumlah sks (1-3): ");
             sks = sc.nextInt();
@@ -96,12 +106,9 @@ class SistemPemantauanKRS {
             } else {
                 System.out.println("Jumlah sks yang anda masukkan tidak valid. Masukkan angka antara 1-3!");
             }
-
         }
 
-
-        mataKuliah mataKuliah = new mataKuliah(kode, nama, sks);
-        mahasiswa.daftarMataKuliah.add(mataKuliah);
+        mahasiswa.daftarMataKuliah[mahasiswa.jumlahMataKuliah++] = new MataKuliah(kode, nama, sks);
         System.out.println("Data mata kuliah berhasil ditambahkan.");
         System.out.print("Tambah mata kuliah lain? (y/t): ");
         String pilihan = sc.nextLine();
@@ -113,18 +120,17 @@ class SistemPemantauanKRS {
 
     public static void tampilkanDaftarKRS() {
         System.out.println("\n--- Daftar KRS Mahasiswa ---");
-        if (daftarMahasiswa.isEmpty()) {
+        if (jumlahMahasiswa == 0) {
             System.out.println("Belum ada data mahasiswa.");
             return;
         }
 
-        // Menampilkan header tabel
         System.out.printf("%-10s %-15s %-40s %-10s\n", "NIM", "Nama", "Mata Kuliah", "SKS");
 
-        // Menampilkan data mahasiswa dan mata kuliah
-        for (Mahasiswa m : daftarMahasiswa) {
-            for (mataKuliah mk : m.daftarMataKuliah) {
-                // Menampilkan setiap mata kuliah yang diambil mahasiswa dalam format tabel
+        for (int i = 0; i < jumlahMahasiswa; i++) {
+            Mahasiswa m = daftarMahasiswa[i];
+            for (int j = 0; j < m.jumlahMataKuliah; j++) {
+                MataKuliah mk = m.daftarMataKuliah[j];
                 System.out.printf("%-10s %-15s %-40s %-10d\n", m.Nim, m.Nama, mk.Nama, mk.sks);
             }
         }
@@ -133,12 +139,11 @@ class SistemPemantauanKRS {
     public static void analisisDataKRS() {
         System.out.println("\n--- Analisis Data KRS ---");
         int count = 0;
-        for (Mahasiswa m : daftarMahasiswa) {
-            if (m.hitungTotalSKS() < 20) {
+        for (int i = 0; i < jumlahMahasiswa; i++) {
+            if (daftarMahasiswa[i].hitungTotalSKS() < 20) {
                 count++;
             }
-            System.out.println("Jumlah mahasiswa yang mengambil SKS kurang dari 20: " + count);
         }
+        System.out.println("Jumlah mahasiswa yang mengambil SKS kurang dari 20: " + count);
     }
 }
-
